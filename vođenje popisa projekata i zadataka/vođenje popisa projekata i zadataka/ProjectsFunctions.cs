@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace vođenje_popisa_projekata_i_zadataka
 {
-    public  class ProjectsFunctions
+    public class ProjectsFunctions
     {
         public static void listAllProjects(Dictionary<Project, List<Task>> projectTasksMapping)
         {
@@ -32,13 +32,21 @@ namespace vođenje_popisa_projekata_i_zadataka
                     Console.Write("\n");
                 }
             }
-        }  
-        
+        }
+
         public static void addNewProject(Dictionary<Project, List<Task>> projectTasksMapping)
         {
             Console.Clear();
             var projectOrder = new List<Project>();
             var newProject = new Project();
+            foreach(var project in projectTasksMapping)
+            {
+                if(newProject.NameOfProject== project.Key.NameOfProject)
+                {
+                    Console.WriteLine("Projekt s tim imenom već postoji.");
+                    return;
+                }
+            }
 
             projectTasksMapping.Add(newProject, new List<Task>());
             projectOrder.Add(newProject);
@@ -49,8 +57,8 @@ namespace vođenje_popisa_projekata_i_zadataka
 
         public static void deleteProject(Dictionary<Project, List<Task>> projectTasksMapping)
         {
-           Console.Clear();
-           Console.Write("Upisite ime projekta koji zelite ukloniti:");
+            Console.Clear();
+            Console.Write("Upisite ime projekta koji zelite ukloniti:");
             var projectNameToDelete = Console.ReadLine();
             bool foundProject = false;
             if (projectTasksMapping.Count == 0)
@@ -58,39 +66,39 @@ namespace vođenje_popisa_projekata_i_zadataka
                 Console.WriteLine("Nema projekata.");
                 return;
             }
-            
-                foreach (var project in projectTasksMapping)
+
+            foreach (var project in projectTasksMapping)
+            {
+                if (project.Key.NameOfProject == projectNameToDelete)
                 {
-                    if (project.Key.NameOfProject == projectNameToDelete)
+                    foundProject = true;
+                    Console.WriteLine("Dali stvarno zelite izbrisati projekt:");
+                    Console.WriteLine($"{project.Key.NameOfProject}-{project.Key.DescriptionOfProject}-{project.Key.StatusOfProject}-{project.Key.StartDateOfProject}-{project.Key.EndDateOfProject}");
+                    Console.WriteLine("Da/Ne");
+                    var answer = string.Empty;
+                    do
                     {
-                        foundProject = true;
-                        Console.WriteLine("Dali stvarno zelite izbrisati projekt:");
-                        Console.WriteLine($"{project.Key.NameOfProject}-{project.Key.DescriptionOfProject}-{project.Key.StatusOfProject}-{project.Key.StartDateOfProject}-{project.Key.EndDateOfProject}");
-                        Console.WriteLine("Da/Ne");
-                        var answer = string.Empty;
-                        do
+                        answer = Console.ReadLine().ToLower();
+                        if (answer == "da")
                         {
-                            answer = Console.ReadLine().ToLower();
-                            if (answer == "da")
-                            {
-                                projectTasksMapping.Remove(project.Key);
-                                Console.WriteLine("Transakcija uspješno izbrisana");
-                            }
-                            else if (answer == "ne")
-                            {
-                                Console.WriteLine("Transakcija nije izbrisana");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Morate upisati da ili ne");
-                                continue;
-                            }
-                        } while (answer != "da" && answer != "ne");
-                        
-                        return;
-                    }
+                            projectTasksMapping.Remove(project.Key);
+                            Console.WriteLine("Projekt uspješno izbrisana");
+                        }
+                        else if (answer == "ne")
+                        {
+                            Console.WriteLine("Projekt nije izbrisana");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Morate upisati da ili ne");
+                            continue;
+                        }
+                    } while (answer != "da" && answer != "ne");
+
+                    return;
                 }
-            if(!foundProject)
+            }
+            if (!foundProject)
             {
                 Console.WriteLine("Projekt nije pronaden.");
             }
@@ -153,7 +161,7 @@ namespace vođenje_popisa_projekata_i_zadataka
 
             foreach (var project in projectTasksMapping)
             {
-                if(project.Key.StatusOfProject.ToLower() == statusToFilterBy.ToLower())
+                if (project.Key.StatusOfProject.ToLower() == statusToFilterBy.ToLower())
                 {
                     foundProject = true;
                     Console.WriteLine($"Ime projekta: {project.Key.NameOfProject}\nOpis projekta: {project.Key.DescriptionOfProject}\nStatus projekta: {project.Key.StatusOfProject}\nDatum početka projekta: {project.Key.StartDateOfProject}\nDatum završetka projekta: {project.Key.EndDateOfProject}");
@@ -163,6 +171,95 @@ namespace vođenje_popisa_projekata_i_zadataka
             {
                 Console.WriteLine("Nema projekata sa tim statusom.");
             }
+        }
+
+        public static void handlingSpecifProject(Dictionary<Project, List<Task>> projectTasksMapping)
+        {
+            Console.Clear();
+            Console.Write("Upisite ime projekta na kojem zelite raditi daljnje promjene:");
+            var projectNameToMakeChanges = Console.ReadLine();
+            bool foundProject = false;
+            if (projectTasksMapping.Count == 0)
+            {
+                Console.WriteLine("Nema projekata.");
+                Console.ReadKey();
+                return;
+            }
+
+            foreach (var project in projectTasksMapping)
+            {
+                if (project.Key.NameOfProject == projectNameToMakeChanges)
+                {
+                    bool taskMenuRunning = true;
+                    while (taskMenuRunning)
+                    {
+                        Console.Clear();
+                        foundProject = true;
+                        Console.WriteLine("1 - Ispis svih zadataka unutar odabranog projekta\n2 - Prikaz detalja odabranog projekta\n" +
+                            "3 - Uređivanje statusa projekta\n4 - Dodavanje zadatka unutar projekta\n5 - Brisanje zadatka iz projekta\n" +
+                            "6 - Prikaz ukupno očekivanog vremena potrebnog za sve aktivne zadatke u projektu\n7 - Upravljanje pojedinim zadatkom\n" +
+                            "8 - Povratak");
+                        var inputedRightOption = int.TryParse(Console.ReadLine(), out var optionForTaskMenu);
+                        switch (optionForTaskMenu)
+                        {
+                            case 1:
+                                {
+                                    TaskFunctions.listAllTasksOfProject(project.Key, project.Value);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    TaskFunctions.listOfDetailsForSelectedProject(project.Key, project.Value);
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    TaskFunctions.editingStatusOfProject(project.Key);
+                                    break;
+                                }
+                            case 4:
+                                {
+                                    TaskFunctions.addingTaskToProject(project.Key, project.Value);
+                                    break;
+                                }
+                            case 5:
+                                {
+                                    TaskFunctions.deletingTaskFromProject(project.Key, project.Value);
+                                    break;
+                                }
+                            case 6:
+                                {
+                                    TaskFunctions.esitimatedTimeForAllActiveTasks(project.Key, project.Value);
+                                    break;
+                                }
+                            case 7:
+                                {
+
+                                    break;
+                                }
+                            case 8:
+                                {
+                                    taskMenuRunning = false;
+                                    break;
+                                }
+                            default:
+                                {
+                                    Console.WriteLine("Krivi unos, molimo pokusajte ponovo.");
+                                    Console.ReadKey();
+                                    break;
+                                }
+
+                        }
+                    }
+                }
+            }
+            if (!foundProject)
+            {
+                Console.WriteLine("Nepostoji projekt s takvim imenom, molimo pokusajte ponovo.");
+                Console.ReadKey();
+            }
+
+
         }
     }
 }

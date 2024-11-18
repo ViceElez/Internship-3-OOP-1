@@ -16,7 +16,7 @@ namespace vođenje_popisa_projekata_i_zadataka
      new Project("Razvoj web stranice", "Razvijanje responzivne web stranice", "Aktivan",
                  new DateTime(2024, 1, 1), new DateTime(2024, 6, 30)),
      new List<Task>
-     {
+     {  
         new Task("Dizajn početne stranice", "Kreirati vizualno privlačnu početnu stranicu", "Zavrsen",
                  "Razvoj web stranice", new DateTime(2024, 2, 1), 120),
         new Task("Postavljanje hostinga", "Konfigurirati hosting za web stranicu", "Aktivan",
@@ -101,7 +101,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                         }
                     case 6:
                         {
-                            //daljnje granjanje u podmeni za taskove
+                            ProjectsFunctions.handlingSpecifProject(projectTasksMapping);
                             break;
                         }
                     case 7:
