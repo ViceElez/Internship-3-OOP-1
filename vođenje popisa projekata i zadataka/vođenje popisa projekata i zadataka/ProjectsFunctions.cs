@@ -176,21 +176,25 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void handlingSpecifProject(Dictionary<Project, List<Task>> projectTasksMapping)
         {
             Console.Clear();
-            Console.Write("Upisite ime projekta na kojem zelite raditi daljnje promjene:");
-            var projectNameToMakeChanges = Console.ReadLine();
-            bool foundProject = false;
             if (projectTasksMapping.Count == 0)
             {
                 Console.WriteLine("Nema projekata.");
                 Console.ReadKey();
                 return;
             }
+            foreach(var project in projectTasksMapping.Keys)
+            {
+                Console.WriteLine($"Ime projekta: {project.NameOfProject}");
+            }
+            Console.Write("Upisite ime projekta na kojem zelite raditi daljnje promjene:");
+            var projectNameToMakeChanges = Console.ReadLine();
+            var foundProject = false;
 
             foreach (var project in projectTasksMapping)
             {
-                if (project.Key.NameOfProject == projectNameToMakeChanges)
+                if (project.Key.NameOfProject == projectNameToMakeChanges) //pitaj nekog za savjet dali triba bit tolower ili ne 
                 {
-                    bool taskMenuRunning = true;
+                    var taskMenuRunning = true;
                     while (taskMenuRunning)
                     {
                         Console.Clear();
@@ -234,7 +238,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                                 }
                             case 7:
                                 {
-
+                                    TaskFunctions.handlingSpecificTasks(project.Key, project.Value);
                                     break;
                                 }
                             case 8:
