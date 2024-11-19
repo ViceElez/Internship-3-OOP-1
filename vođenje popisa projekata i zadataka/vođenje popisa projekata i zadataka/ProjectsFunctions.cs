@@ -173,7 +173,7 @@ namespace vođenje_popisa_projekata_i_zadataka
 
             foreach (var project in projectTasksMapping)
             {
-                if (project.Key.StatusOfProject.ToLower() == statusToFilterBy.ToLower())
+                if (project.Key.StatusOfProject.ToLower().Trim() == statusToFilterBy.ToLower().Trim())
                 {
                     foundProject = true;
                     Console.WriteLine($"Ime projekta: {project.Key.NameOfProject}\nOpis projekta: {project.Key.DescriptionOfProject}\nStatus projekta: {project.Key.StatusOfProject}\nDatum početka projekta: {project.Key.StartDateOfProject}\nDatum završetka projekta: {project.Key.EndDateOfProject}");
@@ -194,100 +194,85 @@ namespace vođenje_popisa_projekata_i_zadataka
                 Console.ReadKey();
                 return;
             }
-            foreach(var project in projectTasksMapping.Keys)
+
+            foreach (var project in projectTasksMapping.Keys)
             {
                 Console.WriteLine($"Ime projekta: {project.NameOfProject}");
             }
             Console.WriteLine();
-            Console.Write("Upisite ime projekta na kojem zelite raditi daljnje promjene:");
+
+            Console.Write("Upisite ime projekta na kojem zelite raditi daljnje promjene: ");
             var projectNameToMakeChanges = Console.ReadLine();
             var foundProject = false;
 
             foreach (var project in projectTasksMapping)
             {
-                if (project.Key.NameOfProject.ToLower().Trim() == projectNameToMakeChanges.ToLower().Trim()) 
+                if (project.Key.NameOfProject.ToLower().Trim() == projectNameToMakeChanges.ToLower().Trim())
                 {
+                    foundProject = true;
                     var taskMenuRunning = true;
                     while (taskMenuRunning)
                     {
                         Console.Clear();
-                        foundProject = true;
                         Console.WriteLine("1 - Ispis svih zadataka unutar odabranog projekta\n2 - Prikaz detalja odabranog projekta\n" +
-                            "3 - Uređivanje statusa projekta\n4 - Dodavanje zadatka unutar projekta\n5 - Brisanje zadatka iz projekta\n" +
-                            "6 - Prikaz ukupno očekivanog vremena potrebnog za sve aktivne zadatke u projektu\n7 - Sortirani zadaci po duljini" +
-                            "\n8 - Sortirani zadaci po prioritetu\n9 - Upravljanje pojedinim zadatkom\n" +
-                            "0 - Povratak");
-                        var inputedRightOption = int.TryParse(Console.ReadLine(), out var optionForTaskMenu);
+                                          "3 - Uređivanje statusa projekta\n4 - Dodavanje zadatka unutar projekta\n5 - Brisanje zadatka iz projekta\n" +
+                                          "6 - Prikaz ukupno očekivanog vremena potrebnog za sve aktivne zadatke u projektu\n7 - Sortirani zadaci po duljini" +
+                                          "\n8 - Sortirani zadaci po prioritetu\n9 - Upravljanje pojedinim zadatkom\n" +
+                                          "0 - Povratak");
+                        Console.Write("Odaberite opciju: ");
+
+                        var inputValid = int.TryParse(Console.ReadLine(), out var optionForTaskMenu);
+
+                        if (!inputValid || optionForTaskMenu < 0 || optionForTaskMenu > 9)
+                        {
+                            Console.WriteLine("\nKrivi unos, molimo pokusajte ponovo.");
+                            Console.ReadKey();
+                            continue; 
+                        }
                         switch (optionForTaskMenu)
                         {
                             case 1:
-                                {
-                                    TaskFunctions.listAllTasksOfProject(project.Key, project.Value);
-                                    break;
-                                }
+                                TaskFunctions.listAllTasksOfProject(project.Key, project.Value);
+                                break;
                             case 2:
-                                {
-                                    TaskFunctions.listOfDetailsForSelectedProject(project.Key, project.Value);
-                                    break;
-                                }
+                                TaskFunctions.listOfDetailsForSelectedProject(project.Key, project.Value);
+                                break;
                             case 3:
-                                {
-                                    TaskFunctions.editingStatusOfProject(project.Key);
-                                    break;
-                                }
+                                TaskFunctions.editingStatusOfProject(project.Key);
+                                break;
                             case 4:
-                                {
-                                    TaskFunctions.addingTaskToProject(project.Key, project.Value);
-                                    break;
-                                }
+                                TaskFunctions.addingTaskToProject(project.Key, project.Value);
+                                break;
                             case 5:
-                                {
-                                    TaskFunctions.deletingTaskFromProject(project.Key, project.Value);
-                                    break;
-                                }
+                                TaskFunctions.deletingTaskFromProject(project.Key, project.Value);
+                                break;
                             case 6:
-                                {
-                                    TaskFunctions.esitimatedTimeForAllActiveTasks(project.Key, project.Value);
-                                    break;
-                                }
+                                TaskFunctions.esitimatedTimeForAllActiveTasks(project.Key, project.Value);
+                                break;
                             case 7:
-                                {
-                                    TaskFunctions.sortingTaskByEstimatedTime(project.Value);
-                                    break;
-                                }
+                                TaskFunctions.sortingTaskByEstimatedTime(project.Value);
+                                break;
                             case 8:
-                                {
-                                    TaskFunctions.sortingTasksByPriority(project.Value);
-                                    break;
-                                }
+                                TaskFunctions.sortingTasksByPriority(project.Value);
+                                break;
                             case 9:
-                                {
-                                    TaskFunctions.handlingSpecificTasks(project.Key, project.Value);
-                                    break;
-                                }
+                                TaskFunctions.handlingSpecificTasks(project.Key, project.Value);
+                                break;
                             case 0:
-                                {
-                                    taskMenuRunning = false;
-                                    break;
-                                }
-                            default:
-                                {
-                                    Console.WriteLine("Krivi unos, molimo pokusajte ponovo.");
-                                    Console.ReadKey();
-                                    continue;
-                                }
-
+                                taskMenuRunning = false; 
+                                break;
                         }
                     }
+                    break; 
                 }
             }
+
             if (!foundProject)
             {
-                Console.WriteLine("Nepostoji projekt s takvim imenom, molimo pokusajte ponovo.");
+                Console.WriteLine("\nNepostoji projekt s takvim imenom, molimo pokusajte ponovo.");
                 Console.ReadKey();
             }
-
-
         }
+
     }
 }

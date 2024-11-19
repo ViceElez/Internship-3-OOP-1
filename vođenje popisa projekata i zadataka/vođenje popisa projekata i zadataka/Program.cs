@@ -66,6 +66,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                 Console.WriteLine("1 - Ispis svih projekata s pripadajućim zadacima\n2 - Dodavanje novog projekta\n3 - Brisanje projekta" +
                     "\n4 - Prikaz svih zadataka s rokom u sljedećih 7 dana\n5 - Prikaz  projekata filtriranih po status\n6 - Upravljanje pojedinim projektom\n" +
                     "7 - Izlaz iz aplikacije");
+                Console.Write("Odaberite opciju: ");
                 var inputedRightOption = int.TryParse(Console.ReadLine(), out var optionForMainMenu);
                 switch (optionForMainMenu)
                 {

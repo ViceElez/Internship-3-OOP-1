@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -9,8 +10,6 @@ namespace vođenje_popisa_projekata_i_zadataka
 {
     public class TaskFunctions
     {
-        //treba dodat kad se minja status zadatka da provjeri jesu li svi zadaci zavrseni i ako jesu da promjeni status projekta u zavrsen
-        //provjeri jos jednon sve funkcije da vidis jeli sve ok s trim i usporedvanjenjem stringova
         public static void listAllTasksOfProject(Project selectedProject, List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
@@ -81,7 +80,7 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void editingStatusOfProject(Project selectedProject)
         {
             Console.Clear();
-            if (selectedProject.StatusOfProject.ToLower() == "zavrsen")
+            if (selectedProject.StatusOfProject.ToLower().Trim() == "zavrsen")
             {
                 Console.WriteLine("Ne možete izmjenitit status jer je projekt završen.");
                 Console.ReadKey();
@@ -92,9 +91,9 @@ namespace vođenje_popisa_projekata_i_zadataka
                 Console.WriteLine($"Status trenutnog projekta je:{selectedProject.StatusOfProject}");
                 Console.WriteLine("Upisite novi status za projekt:");
                 var newStatus = Console.ReadLine();
-                if (newStatus.ToLower() == "aktivan" || newStatus.ToLower() == "zavrsen" || newStatus.ToLower() == "na cekanju")
+                if (newStatus.ToLower().Trim() == "aktivan" || newStatus.ToLower().Trim() == "zavrsen" || newStatus.ToLower().Trim() == "na cekanju")
                 {
-                    if (newStatus.ToLower() == selectedProject.StatusOfProject.ToLower())
+                    if (newStatus.ToLower().Trim() == selectedProject.StatusOfProject.ToLower().Trim())
                     {
                         Console.WriteLine("Novi status je isti kao i trenutni status.");
                         Console.ReadKey();
@@ -121,7 +120,7 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void addingTaskToProject(Project selectedProject, List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
-                if (selectedProject.StatusOfProject.ToLower() == "zavrsen")
+                if (selectedProject.StatusOfProject.ToLower().Trim() == "zavrsen")
                 {
                     Console.WriteLine("Ne možete dodati zadatak jer je projekt završen.");
                     Console.ReadKey();
@@ -271,98 +270,112 @@ namespace vođenje_popisa_projekata_i_zadataka
                 Console.ReadKey();
                 return;
             }
+
             foreach (var task in tasksOfASelectedProject)
             {
-                Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
+                Console.WriteLine($"Ime zadatka: {task.NameOfTask}");
             }
-            Console.Write("Upisite ime zadatka na kojem zelite raditi daljnje promjene:");
-            Console.WriteLine();
+
+            Console.Write("Upisite ime zadatka na kojem zelite raditi daljnje promjene: ");
             var taskToHandle = Console.ReadLine();
             var foundTask = false;
+
             foreach (var task in tasksOfASelectedProject)
             {
-                if (task.NameOfTask.ToLower().Trim() == taskToHandle.ToLower().Trim())  
+                if (task.NameOfTask.ToLower().Trim() == taskToHandle.ToLower().Trim())
                 {
+                    foundTask = true;
                     var taskSubMenuRunning = true;
+
                     while (taskSubMenuRunning)
                     {
-                        Console.Clear();    
-                        foundTask = true;
+                        Console.Clear();
                         Console.WriteLine("1 - Prikaz detalja odabranog zadatka\n2 - Uređivanje statusa zadatka\n3 - Povratak");
-                        var inputedRightOption = int.TryParse(Console.ReadLine(), out var optionForSubTaskMenu);
+                        Console.Write("Odaberite opciju: ");
+
+                        var inputValid = int.TryParse(Console.ReadLine(), out var optionForSubTaskMenu);
+
+                        if (!inputValid || optionForSubTaskMenu < 1 || optionForSubTaskMenu > 3)
+                        {
+                            Console.WriteLine("\nKrivi unos, molimo pokusajte ponovo.");
+                            Console.ReadKey();
+                            continue; 
+                        }
+
                         switch (optionForSubTaskMenu)
                         {
-                            case 1:
+                            case 1: 
+                                Console.Clear();
+                                Console.WriteLine($"Ime zadatka: {task.NameOfTask}");
+                                Console.WriteLine($"Opis zadatka: {task.DescriptionOfTask}");
+                                Console.WriteLine($"Status zadatka: {task.StatusOfTask}");
+                                Console.WriteLine($"Prioritet zadatka: {task.PriorityOfTask}");
+                                Console.WriteLine($"Projekt kojem pripada zadatak: {task.ProjectItBelongsTo}");
+                                Console.WriteLine($"Očekivano trajanje zadatka u minutama: {task.ExcpetedMinutesToFinishTask}");
+                                Console.WriteLine($"Datum završetka zadatka: {task.MandatoryEndDateOfTask}");
+                                Console.ReadKey();
+                                break;
+
+                            case 2: 
+                                Console.Clear();
+                                if (task.StatusOfTask.ToLower().Trim() == "zavrsen")
                                 {
-                                    Console.Clear();
-                                    Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
-                                    Console.WriteLine($"Opis zadatka:{task.DescriptionOfTask}");
-                                    Console.WriteLine($"Status zadatka:{task.StatusOfTask}");
-                                    Console.WriteLine($"Prioritet zadatka:{task.PriorityOfTask}");
-                                    Console.WriteLine($"Projekt kojem pripada zadatka:{task.ProjectItBelongsTo}");
-                                    Console.WriteLine($"Očekivano trajanje zadatka u minutama:{task.ExcpetedMinutesToFinishTask}");
-                                    Console.WriteLine($"Datum završetka zadatka:{task.MandatoryEndDateOfTask}");
+                                    Console.WriteLine("Ne možete izmjeniti status jer je zadatak zavrsen.");
                                     Console.ReadKey();
-                                    break;
                                 }
-                            case 2:
+                                else
                                 {
-                                    Console.Clear();
-                                    if (task.StatusOfTask.ToLower() == "zavrsen")
+                                    Console.WriteLine($"Status trenutnog zadatka je: {task.StatusOfTask}");
+                                    Console.WriteLine("Upisite novi status za zadatak (aktivan, zavrsen, na cekanju):");
+                                    var newStatus = Console.ReadLine();
+
+                                    if (newStatus.ToLower().Trim() == "aktivan" || newStatus.ToLower().Trim() == "zavrsen" || newStatus.ToLower().Trim() == "na cekanju")
                                     {
-                                        Console.WriteLine("Ne možete izmjenitit status jer je zadatak završen.");
+                                        while (newStatus.ToLower().Trim()==task.StatusOfTask.ToLower().Trim())
+                                        {
+                                            Console.WriteLine("Novi status je isti kao i trenutni status.");
+                                            Console.WriteLine("Upisite novi status za zadatak:");
+                                            newStatus = Console.ReadLine();
+                                        }
+                                        task.StatusOfTask = newStatus;
+                                        Console.WriteLine("Status zadatka je promjenjen.");
                                         Console.ReadKey();
-                                        break;
                                     }
                                     else
                                     {
-                                        Console.WriteLine($"Status trenutnog zadatka je:{task.StatusOfTask}");
-                                        Console.WriteLine("Upisite novi status za zadatak:");
-                                        var newStatus = Console.ReadLine();
-                                        if (newStatus.ToLower() == "aktivan" || newStatus.ToLower() == "zavrsen" || newStatus.ToLower() == "na cekanju")
-                                        {
-                                            if (newStatus.ToLower() == task.StatusOfTask.ToLower())
-                                            {
-                                                Console.WriteLine("Novi status je isti kao i trenutni status.");
-                                                Console.ReadKey();
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                task.StatusOfTask = newStatus;
-                                                Console.WriteLine("Status zadatka je promjenjen.");
-                                                Console.ReadKey();
-                                                break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("Krivo upisan status.");
-                                            Console.ReadKey();
-                                            break;
-                                        }
+                                        Console.WriteLine("Krivo upisan status. Dozvoljeni statusi su: aktivan, zavrsen, na cekanju.");
+                                        Console.ReadKey();
                                     }
                                 }
+                                var countOfFinishedTasks = 0;
+                                foreach (var task1 in tasksOfASelectedProject)
+                                {
+                                    if (task1.StatusOfTask.ToLower().Trim() == "zavrsen")
+                                        countOfFinishedTasks++;  
+                                    else 
+                                        break;
+                                }
+                                if(countOfFinishedTasks == tasksOfASelectedProject.Count)
+                                {
+                                    selectedProject.StatusOfProject = "zavrsen";
+                                }
+                                break;
+
                             case 3:
-                                {
-                                    taskSubMenuRunning = false;
-                                    break;
-                                }
-                            default:
-                                {
-                                    Console.WriteLine("Krivi unos, molimo pokusajte ponovo.");
-                                    Console.ReadKey();
-                                    break;
-                                }
+                                taskSubMenuRunning = false;
+                                break;
                         }
                     }
+                    break;
                 }
             }
+
             if (!foundTask)
             {
-                Console.WriteLine("Nepostoji zadatak s takvim imenom, molimo pokusajte ponovo.");
+                Console.WriteLine("\nNepostoji zadatak s takvim imenom, molimo pokusajte ponovo.");
                 Console.ReadKey();
             }
         }
+
     }
 }
