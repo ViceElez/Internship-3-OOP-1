@@ -9,6 +9,8 @@ namespace vođenje_popisa_projekata_i_zadataka
 {
     public class TaskFunctions
     {
+        //treba dodat kad se minja status zadatka da provjeri jesu li svi zadaci zavrseni i ako jesu da promjeni status projekta u zavrsen
+        //provjeri jos jednon sve funkcije da vidis jeli sve ok s trim i usporedvanjenjem stringova
         public static void listAllTasksOfProject(Project selectedProject, List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
@@ -27,6 +29,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                     Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
                     Console.WriteLine($"Opis zadatka:{task.DescriptionOfTask}");
                     Console.WriteLine($"Status zadatka:{task.StatusOfTask}");
+                    Console.WriteLine($"Prioritet zadatka:{task.PriorityOfTask}");
                     Console.WriteLine($"Projekt kojem pripada zadatka:{task.ProjectItBelongsTo}");
                     Console.WriteLine($"Očekivano trajanje zadatka u minutama:{task.ExcpetedMinutesToFinishTask}");
                     Console.WriteLine($"Datum završetka zadatka:{task.MandatoryEndDateOfTask}");
@@ -55,6 +58,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                         Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
                         Console.WriteLine($"Opis zadatka:{task.DescriptionOfTask}");
                         Console.WriteLine($"Status zadatka:{task.StatusOfTask}");
+                        Console.WriteLine($"Prioritet zadatka:{task.PriorityOfTask}");
                         Console.WriteLine($"Projekt kojem pripada zadatka:{task.ProjectItBelongsTo}");
                         Console.WriteLine($"Očekivano trajanje zadatka u minutama:{task.ExcpetedMinutesToFinishTask}");
                         Console.WriteLine($"Datum završetka zadatka:{task.MandatoryEndDateOfTask}");
@@ -117,14 +121,6 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void addingTaskToProject(Project selectedProject, List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
-            if (tasksOfASelectedProject.Count == 0)
-            {
-                Console.WriteLine("Nema zadataka za ovaj projekt.");
-                Console.ReadKey();
-                return;
-            }
-            else
-            {
                 if (selectedProject.StatusOfProject.ToLower() == "zavrsen")
                 {
                     Console.WriteLine("Ne možete dodati zadatak jer je projekt završen.");
@@ -133,14 +129,35 @@ namespace vođenje_popisa_projekata_i_zadataka
                 }
                 else
                 {
-                    Task newTask = new Task();
+                    var taskOrder=new List<Task>();
+                    Console.Write("Upisite ime zadatka:");
+                    var nameOfTask = Console.ReadLine();
+                    foreach (var task in tasksOfASelectedProject)
+                    {
+                        if(task.NameOfTask.ToLower().Trim()== nameOfTask.ToLower().Trim())
+                        {
+                            Console.WriteLine("Zadatak s tim imenom već postoji.");
+                            Console.ReadKey();
+                            return;
+                        }
+                    }
+                    var projectTaskBelongsTo = selectedProject.NameOfProject;
+                    var newTask = new Task(nameOfTask,projectTaskBelongsTo);
                     tasksOfASelectedProject.Add(newTask);
+                    taskOrder.Add(newTask);
+                    var lastAddedTask = taskOrder[taskOrder.Count-1];
+                    Console.Clear();
+                    Console.WriteLine($"Ime zadatka:{lastAddedTask.NameOfTask}");
+                    Console.WriteLine($"Opis zadatka:{lastAddedTask.DescriptionOfTask}");
+                    Console.WriteLine($"Status zadatka:{lastAddedTask.StatusOfTask}");
+                    Console.WriteLine($"Projekt kojem pripada zadatka:{lastAddedTask.ProjectItBelongsTo}");
+                    Console.WriteLine($"Očekivano trajanje zadatka u minutama:{lastAddedTask.ExcpetedMinutesToFinishTask}");
+                    Console.WriteLine($"Datum završetka zadatka:{lastAddedTask.MandatoryEndDateOfTask}");
                     Console.WriteLine("Zadatak je dodan.");
                     Console.ReadKey();
                     return;
 
                 }
-            }
         }
 
         public static void deletingTaskFromProject(Project selectedProject, List<Task> tasksOfASelectedProject)
@@ -158,7 +175,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                 var foundTask=false;
                 foreach (var task in tasksOfASelectedProject)
                 {
-                    if (task.NameOfTask.ToLower() == taskToDelete.ToLower())
+                    if (task.NameOfTask.ToLower().Trim() == taskToDelete.ToLower().Trim())
                     {
                         foundTask = true;
                         Console.WriteLine("Da li stvarno želite izbrisati ovu transakciju (da/ne)?");
@@ -211,6 +228,40 @@ namespace vođenje_popisa_projekata_i_zadataka
             Console.ReadKey();
         }
 
+        public static void sortingTaskByEstimatedTime( List<Task> tasksOfASelectedProject)
+        {
+            Console.Clear();
+            foreach (var task in tasksOfASelectedProject.OrderBy(x => x.ExcpetedMinutesToFinishTask))
+            {
+                Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
+                Console.WriteLine($"Opis zadatka:{task.DescriptionOfTask}");
+                Console.WriteLine($"Status zadatka:{task.StatusOfTask}");
+                Console.WriteLine($"Prioritet zadatka:{task.PriorityOfTask}");
+                Console.WriteLine($"Projekt kojem pripada zadatka:{task.ProjectItBelongsTo}");
+                Console.WriteLine($"Očekivano trajanje zadatka u minutama:{task.ExcpetedMinutesToFinishTask}");
+                Console.WriteLine($"Datum završetka zadatka:{task.MandatoryEndDateOfTask}");
+                Console.WriteLine();
+            }
+            Console.ReadKey();
+        }
+
+        public static void sortingTasksByPriority(List<Task> tasksOfASelectedProject)
+        {
+            Console.Clear();
+            foreach (var task in tasksOfASelectedProject.OrderBy(x => x.PriorityOfTask))
+            {
+                Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
+                Console.WriteLine($"Opis zadatka:{task.DescriptionOfTask}");
+                Console.WriteLine($"Status zadatka:{task.StatusOfTask}");
+                Console.WriteLine($"Prioritet zadatka:{task.PriorityOfTask}");
+                Console.WriteLine($"Projekt kojem pripada zadatka:{task.ProjectItBelongsTo}");
+                Console.WriteLine($"Očekivano trajanje zadatka u minutama:{task.ExcpetedMinutesToFinishTask}");
+                Console.WriteLine($"Datum završetka zadatka:{task.MandatoryEndDateOfTask}");
+                Console.WriteLine();
+            }
+            Console.ReadKey();
+        }
+
         public static void handlingSpecificTasks(Project selectedProject, List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
@@ -225,11 +276,12 @@ namespace vođenje_popisa_projekata_i_zadataka
                 Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
             }
             Console.Write("Upisite ime zadatka na kojem zelite raditi daljnje promjene:");
+            Console.WriteLine();
             var taskToHandle = Console.ReadLine();
             var foundTask = false;
             foreach (var task in tasksOfASelectedProject)
             {
-                if (task.NameOfTask == taskToHandle)  //pitaj nekog za savjet dali triba bit tolower ili ne 
+                if (task.NameOfTask.ToLower().Trim() == taskToHandle.ToLower().Trim())  
                 {
                     var taskSubMenuRunning = true;
                     while (taskSubMenuRunning)
@@ -246,6 +298,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                                     Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
                                     Console.WriteLine($"Opis zadatka:{task.DescriptionOfTask}");
                                     Console.WriteLine($"Status zadatka:{task.StatusOfTask}");
+                                    Console.WriteLine($"Prioritet zadatka:{task.PriorityOfTask}");
                                     Console.WriteLine($"Projekt kojem pripada zadatka:{task.ProjectItBelongsTo}");
                                     Console.WriteLine($"Očekivano trajanje zadatka u minutama:{task.ExcpetedMinutesToFinishTask}");
                                     Console.WriteLine($"Datum završetka zadatka:{task.MandatoryEndDateOfTask}");

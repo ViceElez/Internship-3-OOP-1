@@ -20,11 +20,15 @@ namespace vođenje_popisa_projekata_i_zadataka
             this._startDateOfProject = startDateOfProject;
             this._endDateOfProject = endDateOfProject;
         }
-
-        public Project()
+        public Project(string nameOfProject)
         {
-            Console.Write("Upisite ime projekta:");
-            _nameOfProject = Console.ReadLine();
+            _nameOfProject = nameOfProject;
+            while (string.IsNullOrEmpty(_nameOfProject))
+            {
+                Console.WriteLine("Ime projekta ne može biti prazno.");
+                Console.Write("Upisite ime projekta:");
+                _nameOfProject = Console.ReadLine();
+            }
             Console.Write("Upisite opis projekta:");
             _descriptionOfProject = Console.ReadLine();
             Console.Write("Upisite status projekta(aktivan/zavrsen/na cekanju):");

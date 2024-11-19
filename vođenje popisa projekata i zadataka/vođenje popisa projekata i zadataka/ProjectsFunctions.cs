@@ -25,7 +25,11 @@ namespace vođenje_popisa_projekata_i_zadataka
                     Console.Write("\n");
                     foreach (var task in project.Value)
                     {
-                        Console.WriteLine($"Ime zadatka: {task.NameOfTask}\nOpis zadatka: {task.DescriptionOfTask}\nStatus zadatka: {task.StatusOfTask}\nProjekt kojem pripada zadatak: {task.ProjectItBelongsTo}\nDatum završetka zadatka: {task.MandatoryEndDateOfTask}\nOčekivano trajanje zadatka u minutama: {task.ExcpetedMinutesToFinishTask}");
+                        Console.WriteLine($"Ime zadatka: {task.NameOfTask}\nOpis zadatka: {task.DescriptionOfTask}\n" +
+                            $"Status zadatka: {task.StatusOfTask}\nPrioritet zadatka: {task.PriorityOfTask}\n" +
+                            $"Projekt kojem pripada zadatak: {task.ProjectItBelongsTo}\n" +
+                            $"Datum završetka zadatka: {task.MandatoryEndDateOfTask}\n" +
+                            $"Očekivano trajanje zadatka u minutama: {task.ExcpetedMinutesToFinishTask}");
                         Console.Write("\n");
                     }
                     Console.Write("\n");
@@ -38,21 +42,24 @@ namespace vođenje_popisa_projekata_i_zadataka
         {
             Console.Clear();
             var projectOrder = new List<Project>();
-            var newProject = new Project();
-            foreach(var project in projectTasksMapping)
+            Console.Write("Upisite ime projekta:");
+            var nameOfProject = Console.ReadLine();
+            foreach (var project in projectTasksMapping)
             {
-                if(newProject.NameOfProject== project.Key.NameOfProject)
+                if(nameOfProject.ToLower().Trim() == project.Key.NameOfProject.ToLower().Trim())
                 {
                     Console.WriteLine("Projekt s tim imenom već postoji.");
                     return;
                 }
             }
+            var newProject=new Project(nameOfProject);
 
             projectTasksMapping.Add(newProject, new List<Task>());
             projectOrder.Add(newProject);
             var lastAddedProject = projectOrder[projectOrder.Count - 1];
             Console.Clear();
             Console.WriteLine($"Ime projekta: {lastAddedProject.NameOfProject}\nOpis projekta: {lastAddedProject.DescriptionOfProject}\nStatus projekta: {lastAddedProject.StatusOfProject}\nDatum početka projekta: {lastAddedProject.StartDateOfProject}\nDatum završetka projekta: {lastAddedProject.EndDateOfProject}");
+            Console.WriteLine("Projekt uspjesno dodan.");
         }
 
         public static void deleteProject(Dictionary<Project, List<Task>> projectTasksMapping)
@@ -69,7 +76,7 @@ namespace vođenje_popisa_projekata_i_zadataka
 
             foreach (var project in projectTasksMapping)
             {
-                if (project.Key.NameOfProject == projectNameToDelete)
+                if (project.Key.NameOfProject.ToLower().Trim() == projectNameToDelete.ToLower().Trim())
                 {
                     foundProject = true;
                     Console.WriteLine("Dali stvarno zelite izbrisati projekt:");
@@ -123,7 +130,12 @@ namespace vođenje_popisa_projekata_i_zadataka
                     if (task.MandatoryEndDateOfTask >= today && task.MandatoryEndDateOfTask <= nextWeek)
                     {
                         foundTask = true;
-                        Console.WriteLine($"Ime zadatka: {task.NameOfTask}\nOpis zadatka: {task.DescriptionOfTask}\nStatus zadatka: {task.StatusOfTask}\nProjekt kojem pripada zadatak: {task.ProjectItBelongsTo}\nDatum završetka zadatka: {task.MandatoryEndDateOfTask}\nOčekivano trajanje zadatka u minutama: {task.ExcpetedMinutesToFinishTask}");
+                        Console.WriteLine($"Ime zadatka: {task.NameOfTask}\nOpis zadatka: {task.DescriptionOfTask}\n" +
+                           $"Status zadatka: {task.StatusOfTask}\nPrioritet zadatka: {task.PriorityOfTask}\n" +
+                           $"Projekt kojem pripada zadatak: {task.ProjectItBelongsTo}\n" +
+                           $"Datum završetka zadatka: {task.MandatoryEndDateOfTask}\n" +
+                           $"Očekivano trajanje zadatka u minutama: {task.ExcpetedMinutesToFinishTask}");
+                        Console.WriteLine();
                     }
                 }
             }
@@ -148,7 +160,7 @@ namespace vođenje_popisa_projekata_i_zadataka
 
             while (true)
             {
-                if (statusToFilterBy.ToLower() == "aktivan" || statusToFilterBy.ToLower() == "zavrsen" || statusToFilterBy.ToLower() == "na cekanju")
+                if (statusToFilterBy.ToLower().Trim() == "aktivan" || statusToFilterBy.ToLower().Trim() == "zavrsen" || statusToFilterBy.ToLower().Trim() == "na cekanju")
                     break;
                 else
                 {
@@ -186,13 +198,14 @@ namespace vođenje_popisa_projekata_i_zadataka
             {
                 Console.WriteLine($"Ime projekta: {project.NameOfProject}");
             }
+            Console.WriteLine();
             Console.Write("Upisite ime projekta na kojem zelite raditi daljnje promjene:");
             var projectNameToMakeChanges = Console.ReadLine();
             var foundProject = false;
 
             foreach (var project in projectTasksMapping)
             {
-                if (project.Key.NameOfProject == projectNameToMakeChanges) //pitaj nekog za savjet dali triba bit tolower ili ne 
+                if (project.Key.NameOfProject.ToLower().Trim() == projectNameToMakeChanges.ToLower().Trim()) 
                 {
                     var taskMenuRunning = true;
                     while (taskMenuRunning)
@@ -201,8 +214,9 @@ namespace vođenje_popisa_projekata_i_zadataka
                         foundProject = true;
                         Console.WriteLine("1 - Ispis svih zadataka unutar odabranog projekta\n2 - Prikaz detalja odabranog projekta\n" +
                             "3 - Uređivanje statusa projekta\n4 - Dodavanje zadatka unutar projekta\n5 - Brisanje zadatka iz projekta\n" +
-                            "6 - Prikaz ukupno očekivanog vremena potrebnog za sve aktivne zadatke u projektu\n7 - Upravljanje pojedinim zadatkom\n" +
-                            "8 - Povratak");
+                            "6 - Prikaz ukupno očekivanog vremena potrebnog za sve aktivne zadatke u projektu\n7 - Sortirani zadaci po duljini" +
+                            "\n8 - Sortirani zadaci po prioritetu\n9 - Upravljanje pojedinim zadatkom\n" +
+                            "0 - Povratak");
                         var inputedRightOption = int.TryParse(Console.ReadLine(), out var optionForTaskMenu);
                         switch (optionForTaskMenu)
                         {
@@ -238,10 +252,20 @@ namespace vođenje_popisa_projekata_i_zadataka
                                 }
                             case 7:
                                 {
-                                    TaskFunctions.handlingSpecificTasks(project.Key, project.Value);
+                                    TaskFunctions.sortingTaskByEstimatedTime(project.Value);
                                     break;
                                 }
                             case 8:
+                                {
+                                    TaskFunctions.sortingTasksByPriority(project.Value);
+                                    break;
+                                }
+                            case 9:
+                                {
+                                    TaskFunctions.handlingSpecificTasks(project.Key, project.Value);
+                                    break;
+                                }
+                            case 0:
                                 {
                                     taskMenuRunning = false;
                                     break;
@@ -250,7 +274,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                                 {
                                     Console.WriteLine("Krivi unos, molimo pokusajte ponovo.");
                                     Console.ReadKey();
-                                    break;
+                                    continue;
                                 }
 
                         }
