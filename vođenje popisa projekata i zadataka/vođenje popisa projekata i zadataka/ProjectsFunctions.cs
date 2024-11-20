@@ -177,6 +177,7 @@ namespace vođenje_popisa_projekata_i_zadataka
                 {
                     foundProject = true;
                     Console.WriteLine($"Ime projekta: {project.Key.NameOfProject}\nOpis projekta: {project.Key.DescriptionOfProject}\nStatus projekta: {project.Key.StatusOfProject}\nDatum početka projekta: {project.Key.StartDateOfProject}\nDatum završetka projekta: {project.Key.EndDateOfProject}");
+                    Console.WriteLine();
                 }
             }
             if (!foundProject)

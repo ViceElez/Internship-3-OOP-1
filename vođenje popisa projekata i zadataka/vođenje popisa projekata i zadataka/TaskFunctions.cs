@@ -165,6 +165,7 @@ namespace vođenje_popisa_projekata_i_zadataka
             if (tasksOfASelectedProject.Count == 0)
             {
                 Console.WriteLine("Nema zadataka za ovaj projekt.");
+                Console.ReadKey();
                 return;
             }
             else
@@ -230,6 +231,12 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void sortingTaskByEstimatedTime( List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
+            if (tasksOfASelectedProject.Count == 0)
+            {
+                Console.WriteLine("Nema zadataka za ovaj projekt.");
+                Console.ReadKey();
+                return;
+            }
             foreach (var task in tasksOfASelectedProject.OrderBy(x => x.ExcpetedMinutesToFinishTask))
             {
                 Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
@@ -247,6 +254,12 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void sortingTasksByPriority(List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
+            if (tasksOfASelectedProject.Count == 0)
+            {
+                Console.WriteLine("Nema zadataka za ovaj projekt.");
+                Console.ReadKey();
+                return;
+            }
             foreach (var task in tasksOfASelectedProject.OrderBy(x => x.PriorityOfTask))
             {
                 Console.WriteLine($"Ime zadatka:{task.NameOfTask}");
