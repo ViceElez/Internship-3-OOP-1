@@ -216,15 +216,18 @@ namespace vođenje_popisa_projekata_i_zadataka
         public static void esitimatedTimeForAllActiveTasks(Project selectedProject, List<Task> tasksOfASelectedProject)
         {
             Console.Clear();
-            var sumOfMinutes = 0;
+            var sumOfMinutes = 0.00f;
+            var countOfActiveTasks = 0;
             foreach (var task in tasksOfASelectedProject)
             {
                 if (task.StatusOfTask.ToLower() == "aktivan")
                 {
                     sumOfMinutes += task.ExcpetedMinutesToFinishTask;
+                    countOfActiveTasks++;
                 }
             }
-            Console.WriteLine($"Ukupno ocekivano vrijeme za sve aktivne zadatke u projektu {selectedProject.NameOfProject} je : {sumOfMinutes}");
+            var estimatedTime = sumOfMinutes / (float)countOfActiveTasks;
+            Console.WriteLine($"Ukupno ocekivano vrijeme za sve aktivne zadatke u projektu {selectedProject.NameOfProject} je : {estimatedTime:F2}");
             Console.ReadKey();
         }
 

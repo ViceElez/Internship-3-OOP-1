@@ -10,9 +10,9 @@ namespace vođenje_popisa_projekata_i_zadataka
     {
         private string _nameOfTask, _descriptionOfTask, _statusOfTask, _projectItBelongsTo, _priorityOfTask;
         private DateTime _mandatoryEndDateOfTask;
-        private int _excpetedMinutesToFinishTask;
+        private float _excpetedMinutesToFinishTask;
 
-        public Task(string nameOfTask, string descriptionOfTask, string statusOfTask,string priorityOfTask, string projectItBelongsTo, DateTime mandatoryEndDateOfTask, int excpetedMinutesToFinishTask)
+        public Task(string nameOfTask, string descriptionOfTask, string statusOfTask,string priorityOfTask, string projectItBelongsTo, DateTime mandatoryEndDateOfTask, float excpetedMinutesToFinishTask)
         {
             this._nameOfTask = nameOfTask;
             this._descriptionOfTask = descriptionOfTask;
@@ -71,12 +71,12 @@ namespace vođenje_popisa_projekata_i_zadataka
                 isEndDateValid = DateTime.TryParse(Console.ReadLine(), out _mandatoryEndDateOfTask);
             }
             Console.Write("Upisite očekivano trajanje zadatka u minutama:");
-            var isMinutesValid = int.TryParse(Console.ReadLine(), out _excpetedMinutesToFinishTask);
+            var isMinutesValid = float.TryParse(Console.ReadLine(), out _excpetedMinutesToFinishTask);
             while (!isMinutesValid)
             {
                 Console.WriteLine("Unesite broj u minutama.");
                 Console.Write("Upisite očekivano trajanje zadatka u minutama:");
-                isMinutesValid = int.TryParse(Console.ReadLine(), out _excpetedMinutesToFinishTask);
+                isMinutesValid = float.TryParse(Console.ReadLine(), out _excpetedMinutesToFinishTask);
             }
             _projectItBelongsTo = projectTaskBelongsTo;
             while(string.IsNullOrEmpty(_projectItBelongsTo))
@@ -118,7 +118,7 @@ namespace vođenje_popisa_projekata_i_zadataka
             get { return _mandatoryEndDateOfTask; }
             set { _mandatoryEndDateOfTask = value; }
         }
-        public int ExcpetedMinutesToFinishTask
+        public float ExcpetedMinutesToFinishTask
         {
             get { return _excpetedMinutesToFinishTask; }
             set { _excpetedMinutesToFinishTask = value; }
